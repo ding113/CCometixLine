@@ -22,8 +22,8 @@ jobs:
           - target: x86_64-unknown-linux-musl
             os: ubuntu-latest
             name: ccline-linux-x64-static.tar.gz
-          - target: x86_64-pc-windows-gnu
-            os: ubuntu-latest
+          - target: x86_64-pc-windows-msvc
+            os: windows-latest
             name: ccline-windows-x64.zip
           - target: x86_64-apple-darwin
             os: macos-latest
@@ -41,12 +41,6 @@ jobs:
       with:
         targets: ${{ matrix.target }}
 
-    - name: Install cross-compilation tools
-      if: matrix.target == 'x86_64-pc-windows-gnu'
-      run: |
-        sudo apt-get update
-        sudo apt-get install -y mingw-w64
-
     - name: Install musl tools
       if: matrix.target == 'x86_64-unknown-linux-musl'
       run: |
@@ -57,7 +51,7 @@ jobs:
       run: cargo build --release --target ${{ matrix.target }}
 
     - name: Package Linux/macOS
-      if: matrix.os != 'windows-latest' && matrix.target != 'x86_64-pc-windows-gnu'
+      if: matrix.os != 'windows-latest' && matrix.target != 'x86_64-pc-windows-msvc'
       run: |
         mkdir -p dist
         cp target/${{ matrix.target }}/release/ccometixline-packycc dist/ccline
@@ -65,12 +59,12 @@ jobs:
         tar czf ../${{ matrix.name }} ccline
 
     - name: Package Windows
-      if: matrix.target == 'x86_64-pc-windows-gnu'
+      if: matrix.target == 'x86_64-pc-windows-msvc'
       run: |
-        mkdir -p dist
-        cp target/${{ matrix.target }}/release/ccometixline-packycc.exe dist/ccline.exe
+        mkdir dist
+        copy "target\${{ matrix.target }}\release\ccometixline-packycc.exe" "dist\ccline.exe"
         cd dist
-        zip ../${{ matrix.name }} ccline.exe
+        7z a "..\${{ matrix.name }}" ccline.exe
 
     - name: Upload artifact
       uses: actions/upload-artifact@v4
@@ -138,6 +132,46 @@ jobs:
         # Prepare packages with version management
         node npm/scripts/prepare-packages.js
         
+        # Validate extracted binaries before copying
+        echo "🔍 Validating extracted binaries..."
+        
+        # Check macOS x64
+        if [[ ! -f "extracted/ccline-darwin-x64" ]]; then
+          echo "❌ Missing Darwin x64 binary"
+          exit 1
+        fi
+        file extracted/ccline-darwin-x64
+        
+        # Check macOS ARM64
+        if [[ ! -f "extracted/ccline-darwin-arm64" ]]; then
+          echo "❌ Missing Darwin ARM64 binary"
+          exit 1
+        fi
+        file extracted/ccline-darwin-arm64
+        
+        # Check Linux x64
+        if [[ ! -f "extracted/ccline-linux-x64" ]]; then
+          echo "❌ Missing Linux x64 binary"
+          exit 1
+        fi
+        file extracted/ccline-linux-x64
+        
+        # Check Linux musl
+        if [[ ! -f "extracted/ccline-linux-x64-musl" ]]; then
+          echo "❌ Missing Linux x64-musl binary"
+          exit 1
+        fi
+        file extracted/ccline-linux-x64-musl
+        
+        # Check Windows
+        if [[ ! -f "extracted/ccline-win32-x64.exe" ]]; then
+          echo "❌ Missing Windows x64 binary"
+          exit 1
+        fi
+        file extracted/ccline-win32-x64.exe
+        
+        echo "✅ All binaries validated successfully"
+        
         # Copy binaries to platform directories
         cp extracted/ccline-darwin-x64 npm-publish/darwin-x64/ccline
         cp extracted/ccline-darwin-arm64 npm-publish/darwin-arm64/ccline
@@ -151,36 +185,174 @@ jobs:
         chmod +x npm-publish/linux-x64/ccline
         chmod +x npm-publish/linux-x64-musl/ccline
         
+        # Final validation - check binaries in npm-publish directories
+        echo "🔍 Validating copied binaries in npm-publish directories..."
+        for platform in darwin-x64 darwin-arm64 linux-x64 linux-x64-musl; do
+          binary_path="npm-publish/$platform/ccline"
+          if [[ ! -f "$binary_path" ]]; then
+            echo "❌ Missing binary in $platform directory"
+            exit 1
+          fi
+          if [[ ! -x "$binary_path" ]]; then
+            echo "❌ Binary not executable in $platform directory"
+            exit 1
+          fi
+          echo "✅ $platform: binary ready"
+        done
+        
+        # Check Windows binary
+        if [[ ! -f "npm-publish/win32-x64/ccline.exe" ]]; then
+          echo "❌ Missing Windows binary in npm-publish directory"
+          exit 1
+        fi
+        echo "✅ win32-x64: binary ready"
+        
         # Verify packages
-        echo "Package structure:"
+        echo "📋 Package structure verification:"
         find npm-publish -name "package.json" -exec echo "=== {} ===" \; -exec head -5 {} \;
 
     - name: Publish platform packages to NPM
       env:
         NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
       run: |
-        # Publish platform packages first
-        for platform in darwin-x64 darwin-arm64 linux-x64 linux-x64-musl win32-x64; do
-          echo "📦 Publishing @ding113/ccline-packycc-$platform"
+        # Function to publish with retry
+        publish_with_retry() {
+          local platform=$1
+          local max_attempts=3
+          local attempt=1
+          
           cd npm-publish/$platform
-          npm publish --access public
+          PACKAGE_NAME=$(node -p "require('./package.json').name")
+          
+          while [ $attempt -le $max_attempts ]; do
+            echo "📦 Publishing $PACKAGE_NAME (attempt $attempt/$max_attempts)"
+            
+            if npm publish --access public; then
+              echo "✅ Published $PACKAGE_NAME successfully"
+              
+              # Verify package is available on NPM registry
+              echo "🔍 Verifying $PACKAGE_NAME availability..."
+              sleep 10
+              
+              if npm view $PACKAGE_NAME version >/dev/null 2>&1; then
+                echo "✅ Verified $PACKAGE_NAME is available on NPM"
+                cd ../..
+                return 0
+              else
+                echo "⚠️  Package published but not yet available on registry, retrying verification..."
+                sleep 15
+                
+                if npm view $PACKAGE_NAME version >/dev/null 2>&1; then
+                  echo "✅ Verified $PACKAGE_NAME is now available on NPM"
+                  cd ../..
+                  return 0
+                fi
+              fi
+            fi
+            
+            echo "❌ Attempt $attempt failed for $PACKAGE_NAME"
+            attempt=$((attempt + 1))
+            
+            if [ $attempt -le $max_attempts ]; then
+              echo "⏳ Waiting 30 seconds before retry..."
+              sleep 30
+            fi
+          done
+          
+          echo "❌ Failed to publish $PACKAGE_NAME after $max_attempts attempts"
           cd ../..
-          echo "✅ Published @ding113/ccline-packycc-$platform"
+          return 1
+        }
+        
+        # Publish platform packages with retry logic
+        echo "🚀 Publishing platform packages with retry logic..."
+        failed_packages=()
+        
+        for platform in darwin-x64 darwin-arm64 linux-x64 linux-x64-musl win32-x64; do
+          if ! publish_with_retry $platform; then
+            failed_packages+=($platform)
+          fi
         done
+        
+        # Check if any packages failed
+        if [ ${#failed_packages[@]} -gt 0 ]; then
+          echo "❌ The following packages failed to publish:"
+          printf '%s\n' "${failed_packages[@]}"
+          echo "❌ Aborting release due to platform package failures"
+          exit 1
+        fi
+        
+        echo "✅ All platform packages published successfully!"
 
     - name: Wait for NPM registry
       run: |
         echo "⏳ Waiting for platform packages to be available on NPM..."
-        sleep 30
+        sleep 60
 
     - name: Publish main package to NPM
       env:
         NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
       run: |
         cd npm-publish/main
-        echo "📦 Publishing @ding113/ccline-packycc"
-        npm publish --access public
-        echo "✅ Published @ding113/ccline-packycc"
-        echo ""
-        echo "🎉 NPM packages published successfully!"
-        echo "Install with: npm install -g @ding113/ccline-packycc"
+        PACKAGE_NAME=$(node -p "require('./package.json').name")
+        
+        # Function to publish main package with retry
+        publish_main_with_retry() {
+          local max_attempts=3
+          local attempt=1
+          
+          while [ $attempt -le $max_attempts ]; do
+            echo "📦 Publishing $PACKAGE_NAME (attempt $attempt/$max_attempts)"
+            
+            if npm publish --access public; then
+              echo "✅ Published $PACKAGE_NAME successfully"
+              
+              # Verify package is available on NPM registry
+              echo "🔍 Verifying $PACKAGE_NAME availability..."
+              sleep 10
+              
+              if npm view $PACKAGE_NAME version >/dev/null 2>&1; then
+                echo "✅ Verified $PACKAGE_NAME is available on NPM"
+                return 0
+              else
+                echo "⚠️  Package published but not yet available on registry, retrying verification..."
+                sleep 15
+                
+                if npm view $PACKAGE_NAME version >/dev/null 2>&1; then
+                  echo "✅ Verified $PACKAGE_NAME is now available on NPM"
+                  return 0
+                fi
+              fi
+            fi
+            
+            echo "❌ Attempt $attempt failed for $PACKAGE_NAME"
+            attempt=$((attempt + 1))
+            
+            if [ $attempt -le $max_attempts ]; then
+              echo "⏳ Waiting 30 seconds before retry..."
+              sleep 30
+            fi
+          done
+          
+          echo "❌ Failed to publish $PACKAGE_NAME after $max_attempts attempts"
+          return 1
+        }
+        
+        # Publish main package
+        if publish_main_with_retry; then
+          echo "✅ Main package published successfully!"
+          echo ""
+          echo "🎉 NPM packages published successfully!"
+          echo "📥 Install with: npm install -g $PACKAGE_NAME"
+          
+          # Final verification - check that main package can find all dependencies
+          echo "🔍 Final verification - checking package dependencies..."
+          if npm view $PACKAGE_NAME optionalDependencies >/dev/null 2>&1; then
+            echo "✅ Main package dependencies verified"
+          else
+            echo "⚠️  Warning: Could not verify main package dependencies"
+          fi
+        else
+          echo "❌ Failed to publish main package"
+          exit 1
+        fi

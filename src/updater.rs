@@ -350,7 +350,7 @@ pub mod github {
 
     /// Check for updates from GitHub Releases API
     pub fn check_for_updates() -> Result<Option<GitHubRelease>, Box<dyn std::error::Error>> {
-        let url = "https://api.github.com/repos/Haleclipse/CCometixLine/releases/latest";
+        let url = "https://api.github.com/repos/ding113/ccline-packycc/releases/latest";
 
         let response = ureq::get(url)
             .set(
