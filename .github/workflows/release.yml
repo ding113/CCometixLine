@@ -60,7 +60,7 @@ jobs:
       if: matrix.os != 'windows-latest' && matrix.target != 'x86_64-pc-windows-gnu'
       run: |
         mkdir -p dist
-        cp target/${{ matrix.target }}/release/ccometixline dist/ccline
+        cp target/${{ matrix.target }}/release/ccometixline-packycc dist/ccline
         cd dist
         tar czf ../${{ matrix.name }} ccline
 
@@ -68,7 +68,7 @@ jobs:
       if: matrix.target == 'x86_64-pc-windows-gnu'
       run: |
         mkdir -p dist
-        cp target/${{ matrix.target }}/release/ccometixline.exe dist/ccline.exe
+        cp target/${{ matrix.target }}/release/ccometixline-packycc.exe dist/ccline.exe
         cd dist
         zip ../${{ matrix.name }} ccline.exe
 
@@ -161,11 +161,11 @@ jobs:
       run: |
         # Publish platform packages first
         for platform in darwin-x64 darwin-arm64 linux-x64 linux-x64-musl win32-x64; do
-          echo "📦 Publishing @cometix/ccline-$platform"
+          echo "📦 Publishing @ding113/ccline-$platform"
           cd npm-publish/$platform
           npm publish --access public
           cd ../..
-          echo "✅ Published @cometix/ccline-$platform"
+          echo "✅ Published @ding113/ccline-$platform"
         done
 
     - name: Wait for NPM registry
@@ -178,9 +178,9 @@ jobs:
         NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
       run: |
         cd npm-publish/main
-        echo "📦 Publishing @cometix/ccline"
+        echo "📦 Publishing @ding113/ccline"
         npm publish --access public
-        echo "✅ Published @cometix/ccline"
+        echo "✅ Published @ding113/ccline"
         echo ""
         echo "🎉 NPM packages published successfully!"
-        echo "Install with: npm install -g @cometix/ccline"
+        echo "Install with: npm install -g @ding113/ccline"
