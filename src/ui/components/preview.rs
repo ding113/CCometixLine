@@ -156,7 +156,10 @@ impl PreviewComponent {
                         let mut map = HashMap::new();
                         map.insert("raw_spent".to_string(), "88.4846".to_string());
                         map.insert("opus_enabled".to_string(), "true".to_string());
-                        map.insert("endpoint_used".to_string(), "https://www.packycode.com/api/backend/users/info".to_string());
+                        map.insert(
+                            "endpoint_used".to_string(),
+                            "https://www.packycode.com/api/backend/users/info".to_string(),
+                        );
                         map
                     },
                 },

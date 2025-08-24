@@ -65,7 +65,9 @@ impl SmartEndpointDetector {
 
     fn get_cache_file_path() -> PathBuf {
         if let Some(home) = dirs::home_dir() {
-            home.join(".claude").join("ccline").join("endpoint_cache.json")
+            home.join(".claude")
+                .join("ccline")
+                .join("endpoint_cache.json")
         } else {
             PathBuf::from("endpoint_cache.json")
         }
@@ -85,7 +87,7 @@ impl SmartEndpointDetector {
             if let Some(parent) = self.cache_file_path.parent() {
                 let _ = fs::create_dir_all(parent);
             }
-            
+
             if let Ok(content) = serde_json::to_string_pretty(cache) {
                 let _ = fs::write(&self.cache_file_path, content);
             }
@@ -104,7 +106,7 @@ impl SmartEndpointDetector {
             let cache_age = SystemTime::now()
                 .duration_since(cache.last_success_time)
                 .unwrap_or(Duration::from_secs(u64::MAX));
-            
+
             // 缓存有效条件：API key 相同且时间不超过 24 小时
             current_hash == cache.api_key_hash && cache_age < Duration::from_secs(86400)
         } else {
@@ -112,9 +114,13 @@ impl SmartEndpointDetector {
         }
     }
 
-    fn try_endpoint(&self, endpoint: &EndpointConfig, api_key: &str) -> Option<PackyCodeApiResponse> {
+    fn try_endpoint(
+        &self,
+        endpoint: &EndpointConfig,
+        api_key: &str,
+    ) -> Option<PackyCodeApiResponse> {
         let debug = env::var("PACKYCODE_DEBUG").is_ok();
-        
+
         if debug {
             eprintln!("[DEBUG] Trying endpoint: {}", endpoint.url);
         }
@@ -132,13 +138,21 @@ impl SmartEndpointDetector {
                 if response.status() == 200 {
                     let elapsed = start_time.elapsed().unwrap_or(Duration::from_secs(0));
                     if debug {
-                        eprintln!("[DEBUG] Success: {} in {}ms", endpoint.name, elapsed.as_millis());
+                        eprintln!(
+                            "[DEBUG] Success: {} in {}ms",
+                            endpoint.name,
+                            elapsed.as_millis()
+                        );
                     }
-                    
+
                     response.into_json::<PackyCodeApiResponse>().ok()
                 } else {
                     if debug {
-                        eprintln!("[DEBUG] Failed: {} status {}", endpoint.name, response.status());
+                        eprintln!(
+                            "[DEBUG] Failed: {} status {}",
+                            endpoint.name,
+                            response.status()
+                        );
                     }
                     None
                 }
@@ -157,7 +171,7 @@ impl SmartEndpointDetector {
         if self.is_cache_valid(api_key) {
             if let Some(ref cache) = self.cache.clone() {
                 let cached_endpoint = &cache.successful_endpoint;
-                
+
                 // 尝试使用缓存的端点
                 if let Some(endpoint) = self.endpoints.iter().find(|e| e.url == *cached_endpoint) {
                     if let Some(response) = self.try_endpoint(endpoint, api_key) {
@@ -218,16 +232,16 @@ impl QuotaSegment {
 
     fn load_api_key(&self) -> Option<String> {
         // 优先级：环境变量 > Claude Code settings.json > api_key 文件
-        
+
         // 1. 环境变量
         if let Ok(key) = env::var("PACKYCODE_API_KEY") {
             return Some(key);
         }
-        
+
         if let Ok(key) = env::var("ANTHROPIC_API_KEY") {
             return Some(key);
         }
-        
+
         if let Ok(key) = env::var("ANTHROPIC_AUTH_TOKEN") {
             return Some(key);
         }
@@ -298,15 +312,20 @@ impl Segment for QuotaSegment {
         #[cfg(feature = "quota")]
         {
             let api_key = self.load_api_key()?;
-            
+
             // 使用静态方法进行端点检测
-            if let Some((endpoint_url, response)) = SmartEndpointDetector::detect_endpoint_static(&api_key) {
+            if let Some((endpoint_url, response)) =
+                SmartEndpointDetector::detect_endpoint_static(&api_key)
+            {
                 let daily_spent = self.format_daily_spent(&response.daily_spent_usd);
                 let opus_status = self.format_opus_status(response.opus_enabled);
-                
+
                 let mut metadata = HashMap::new();
                 metadata.insert("raw_spent".to_string(), response.daily_spent_usd);
-                metadata.insert("opus_enabled".to_string(), response.opus_enabled.to_string());
+                metadata.insert(
+                    "opus_enabled".to_string(),
+                    response.opus_enabled.to_string(),
+                );
                 metadata.insert("endpoint_used".to_string(), endpoint_url);
 
                 Some(SegmentData {
@@ -318,7 +337,7 @@ impl Segment for QuotaSegment {
                 // 所有端点都失败
                 let mut metadata = HashMap::new();
                 metadata.insert("status".to_string(), "offline".to_string());
-                
+
                 Some(SegmentData {
                     primary: "Offline".to_string(),
                     secondary: "".to_string(),
