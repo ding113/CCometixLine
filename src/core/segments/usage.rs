@@ -9,9 +9,9 @@ use std::path::Path;
 /// Returns 1M for Sonnet[1M] models, 200K for all others
 fn get_context_limit(model_name: &str) -> u32 {
     if model_name.contains("[1m]") {
-        1_000_000  // 1M for Sonnet[1M] model
+        1_000_000 // 1M for Sonnet[1M] model
     } else {
-        200_000    // 200K default for all other models
+        200_000 // 200K default for all other models
     }
 }
 
@@ -32,7 +32,7 @@ impl Segment for UsageSegment {
         } else {
             parse_transcript_usage(&input.transcript_path)
         };
-        
+
         // Use dynamic context limit based on model
         let context_limit = get_context_limit(&input.model.display_name);
         let context_used_rate = (context_used_token as f64 / context_limit as f64) * 100.0;
