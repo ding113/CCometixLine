@@ -8,12 +8,17 @@ use std::hash::{Hash, Hasher};
 use std::path::PathBuf;
 use std::time::{Duration, SystemTime};
 
+// 默认值函数
+fn default_opus_enabled() -> bool {
+    true
+}
+
 // API 响应结构
 #[derive(Debug, Deserialize)]
 struct PackyCodeApiResponse {
     #[serde(rename = "daily_spent_usd")]
     daily_spent_usd: String,
-    #[serde(rename = "opus_enabled")]
+    #[serde(rename = "opus_enabled", default = "default_opus_enabled")]
     opus_enabled: bool,
 }
 
