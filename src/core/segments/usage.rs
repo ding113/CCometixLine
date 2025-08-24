@@ -8,8 +8,8 @@ use std::path::Path;
 /// Get context limit for a specific model
 /// Returns 1M for Sonnet[1M] models, 200K for all others
 fn get_context_limit(model_name: &str) -> u32 {
-    if model_name.contains("[1m]") {
-        1_000_000 // 1M for Sonnet[1M] model
+    if model_name.contains("[1m]") || model_name.contains("1M token context") {
+        1_000_000 // 1M for Sonnet[1M] models
     } else {
         200_000 // 200K default for all other models
     }
