@@ -5,7 +5,15 @@ use std::fs;
 use std::io::{BufRead, BufReader};
 use std::path::Path;
 
-const CONTEXT_LIMIT: u32 = 200000;
+/// Get context limit for a specific model
+/// Returns 1M for Sonnet[1M] models, 200K for all others
+fn get_context_limit(model_name: &str) -> u32 {
+    if model_name.contains("[1m]") {
+        1_000_000  // 1M for Sonnet[1M] model
+    } else {
+        200_000    // 200K default for all other models
+    }
+}
 
 #[derive(Default)]
 pub struct UsageSegment;
@@ -24,7 +32,10 @@ impl Segment for UsageSegment {
         } else {
             parse_transcript_usage(&input.transcript_path)
         };
-        let context_used_rate = (context_used_token as f64 / CONTEXT_LIMIT as f64) * 100.0;
+        
+        // Use dynamic context limit based on model
+        let context_limit = get_context_limit(&input.model.display_name);
+        let context_used_rate = (context_used_token as f64 / context_limit as f64) * 100.0;
 
         let percentage_display = if context_used_rate.fract() == 0.0 {
             format!("{:.0}%", context_used_rate)
@@ -46,7 +57,7 @@ impl Segment for UsageSegment {
         let mut metadata = HashMap::new();
         metadata.insert("tokens".to_string(), context_used_token.to_string());
         metadata.insert("percentage".to_string(), context_used_rate.to_string());
-        metadata.insert("limit".to_string(), CONTEXT_LIMIT.to_string());
+        metadata.insert("limit".to_string(), context_limit.to_string());
 
         Some(SegmentData {
             primary: format!("{} · {} tokens", percentage_display, tokens_display),
