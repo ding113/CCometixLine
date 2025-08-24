@@ -149,6 +149,17 @@ impl PreviewComponent {
                         map
                     },
                 },
+                SegmentId::Quota => SegmentData {
+                    primary: "$88.48".to_string(),
+                    secondary: "Opus✓".to_string(),
+                    metadata: {
+                        let mut map = HashMap::new();
+                        map.insert("raw_spent".to_string(), "88.4846".to_string());
+                        map.insert("opus_enabled".to_string(), "true".to_string());
+                        map.insert("endpoint_used".to_string(), "https://www.packycode.com/api/backend/users/info".to_string());
+                        map
+                    },
+                },
             };
 
             segments_data.push((segment_config.clone(), mock_data));

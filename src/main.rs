@@ -1,6 +1,6 @@
-use ccometixline::cli::Cli;
-use ccometixline::config::{Config, InputData};
-use ccometixline::core::{collect_all_segments, StatusLineGenerator};
+use ccometixline_packycc::cli::Cli;
+use ccometixline_packycc::config::{Config, InputData};
+use ccometixline_packycc::core::{collect_all_segments, StatusLineGenerator};
 use std::io;
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
@@ -17,7 +17,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 
         // Apply theme override if provided
         if let Some(theme) = cli.theme {
-            config = ccometixline::ui::themes::ThemePresets::get_theme(&theme);
+            config = ccometixline_packycc::ui::themes::ThemePresets::get_theme(&theme);
         }
 
         config.print()?;
@@ -34,7 +34,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     if cli.config {
         #[cfg(feature = "tui")]
         {
-            ccometixline::ui::run_configurator()?;
+            ccometixline_packycc::ui::run_configurator()?;
         }
         #[cfg(not(feature = "tui"))]
         {
@@ -61,7 +61,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     // Apply theme override if provided
     if let Some(theme) = cli.theme {
-        config = ccometixline::ui::themes::ThemePresets::get_theme(&theme);
+        config = ccometixline_packycc::ui::themes::ThemePresets::get_theme(&theme);
     }
 
     // Read Claude Code data from stdin

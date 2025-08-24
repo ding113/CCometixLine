@@ -1,6 +1,7 @@
 pub mod directory;
 pub mod git;
 pub mod model;
+pub mod quota;
 pub mod update;
 pub mod usage;
 
@@ -24,5 +25,6 @@ pub struct SegmentData {
 pub use directory::DirectorySegment;
 pub use git::GitSegment;
 pub use model::ModelSegment;
+pub use quota::QuotaSegment;
 pub use update::UpdateSegment;
 pub use usage::UsageSegment;

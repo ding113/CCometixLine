@@ -32,6 +32,7 @@ impl SettingsComponent {
                 SegmentId::Git => "Git",
                 SegmentId::Usage => "Usage",
                 SegmentId::Update => "Update",
+                SegmentId::Quota => "Quota",
             };
             let current_icon = match config.style.mode {
                 StyleMode::Plain => &segment.icon.plain,

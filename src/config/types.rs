@@ -69,6 +69,7 @@ pub enum SegmentId {
     Git,
     Usage,
     Update,
+    Quota,
 }
 
 // Legacy compatibility structure

@@ -499,6 +499,7 @@ impl App {
                         SegmentId::Git => "Git",
                         SegmentId::Usage => "Usage",
                         SegmentId::Update => "Update",
+                        SegmentId::Quota => "Quota",
                     };
                     let is_enabled = segment.enabled;
                     self.status_message = Some(format!(
@@ -522,6 +523,7 @@ impl App {
                                 SegmentId::Git => "Git",
                                 SegmentId::Usage => "Usage",
                                 SegmentId::Update => "Update",
+                                SegmentId::Quota => "Quota",
                             };
                             let is_enabled = segment.enabled;
                             self.status_message = Some(format!(

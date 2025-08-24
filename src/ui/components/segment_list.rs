@@ -53,6 +53,7 @@ impl SegmentListComponent {
                     SegmentId::Git => "Git",
                     SegmentId::Usage => "Usage",
                     SegmentId::Update => "Update",
+                    SegmentId::Quota => "Quota",
                 };
 
                 if is_selected {

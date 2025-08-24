@@ -1,11 +1,11 @@
 [package]
-name = "ccometixline"
+name = "ccometixline-packycc"
 version = "1.0.3"
 edition = "2021"
 description = "CCometixLine (ccline) - High-performance Claude Code StatusLine tool written in Rust"
 authors = ["Haleclipse"]
 license = "MIT"
-repository = "https://github.com/username/CCometixLine"
+repository = "https://github.com/ding113/CCometixLine"
 readme = "README.md"
 keywords = ["claude", "statusline", "powerline", "rust", "claude-code"]
 categories = ["command-line-utilities", "development-tools"]
@@ -32,6 +32,7 @@ chrono = { version = "0.4", features = ["serde"], optional = true }
 dirs = { version = "5.0", optional = true }
 
 [features]
-default = ["tui", "self-update"]
+default = ["tui", "self-update", "quota"]
 tui = ["ratatui", "crossterm", "ansi_term", "ansi-to-tui", "chrono"]
 self-update = ["ureq", "semver", "chrono", "dirs"]
+quota = ["ureq", "dirs"]
