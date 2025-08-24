@@ -127,6 +127,7 @@ impl ThemePresets {
                 Self::directory_segment(),
                 Self::git_segment(),
                 Self::usage_segment(),
+                Self::quota_segment(),
             ],
             theme: "default".to_string(),
         }
@@ -219,6 +220,7 @@ impl ThemePresets {
                 Self::minimal_directory_segment(),
                 Self::minimal_git_segment(),
                 Self::minimal_usage_segment(),
+                Self::minimal_quota_segment(),
             ],
             theme: "minimal".to_string(),
         }
@@ -235,6 +237,7 @@ impl ThemePresets {
                 Self::gruvbox_directory_segment(),
                 Self::gruvbox_git_segment(),
                 Self::gruvbox_usage_segment(),
+                Self::gruvbox_quota_segment(),
             ],
             theme: "gruvbox".to_string(),
         }
@@ -251,6 +254,7 @@ impl ThemePresets {
                 Self::nord_directory_segment(),
                 Self::nord_git_segment(),
                 Self::nord_usage_segment(),
+                Self::nord_quota_segment(),
             ],
             theme: "nord".to_string(),
         }
@@ -333,6 +337,24 @@ impl ThemePresets {
         }
     }
 
+    fn minimal_quota_segment() -> SegmentConfig {
+        SegmentConfig {
+            id: SegmentId::Quota,
+            enabled: true,
+            icon: IconConfig {
+                plain: "$".to_string(),
+                nerd_font: "\u{f155}".to_string(),
+            },
+            colors: ColorConfig {
+                icon: Some(AnsiColor::Color16 { c16: 8 }),
+                text: Some(AnsiColor::Color16 { c16: 8 }),
+                background: None,
+            },
+            styles: TextStyleConfig::default(),
+            options: HashMap::new(),
+        }
+    }
+
     // Gruvbox theme segments
     fn gruvbox_model_segment() -> SegmentConfig {
         SegmentConfig {
@@ -403,6 +425,24 @@ impl ThemePresets {
             colors: ColorConfig {
                 icon: Some(AnsiColor::Color16 { c16: 5 }),
                 text: Some(AnsiColor::Color16 { c16: 5 }),
+                background: None,
+            },
+            styles: TextStyleConfig { text_bold: true },
+            options: HashMap::new(),
+        }
+    }
+
+    fn gruvbox_quota_segment() -> SegmentConfig {
+        SegmentConfig {
+            id: SegmentId::Quota,
+            enabled: true,
+            icon: IconConfig {
+                plain: "💰".to_string(),
+                nerd_font: "\u{f155}".to_string(),
+            },
+            colors: ColorConfig {
+                icon: Some(AnsiColor::Color16 { c16: 3 }),
+                text: Some(AnsiColor::Color16 { c16: 3 }),
                 background: None,
             },
             styles: TextStyleConfig { text_bold: true },
@@ -535,6 +575,36 @@ impl ThemePresets {
         }
     }
 
+    fn nord_quota_segment() -> SegmentConfig {
+        SegmentConfig {
+            id: SegmentId::Quota,
+            enabled: true,
+            icon: IconConfig {
+                plain: "💰".to_string(),
+                nerd_font: "\u{f155}".to_string(),
+            },
+            colors: ColorConfig {
+                icon: Some(AnsiColor::Rgb {
+                    r: 208,
+                    g: 135,
+                    b: 112,
+                }),
+                text: Some(AnsiColor::Rgb {
+                    r: 208,
+                    g: 135,
+                    b: 112,
+                }),
+                background: Some(AnsiColor::Rgb {
+                    r: 76,
+                    g: 86,
+                    b: 106,
+                }),
+            },
+            styles: TextStyleConfig::default(),
+            options: HashMap::new(),
+        }
+    }
+
     // Powerline Dark theme
     pub fn get_powerline_dark() -> Config {
         Config {
@@ -547,6 +617,7 @@ impl ThemePresets {
                 Self::powerline_dark_directory_segment(),
                 Self::powerline_dark_git_segment(),
                 Self::powerline_dark_usage_segment(),
+                Self::powerline_dark_quota_segment(),
             ],
             theme: "powerline-dark".to_string(),
         }
@@ -676,6 +747,36 @@ impl ThemePresets {
         }
     }
 
+    fn powerline_dark_quota_segment() -> SegmentConfig {
+        SegmentConfig {
+            id: SegmentId::Quota,
+            enabled: true,
+            icon: IconConfig {
+                plain: "💰".to_string(),
+                nerd_font: "\u{f155}".to_string(),
+            },
+            colors: ColorConfig {
+                icon: Some(AnsiColor::Rgb {
+                    r: 255,
+                    g: 255,
+                    b: 255,
+                }),
+                text: Some(AnsiColor::Rgb {
+                    r: 255,
+                    g: 255,
+                    b: 255,
+                }),
+                background: Some(AnsiColor::Rgb {
+                    r: 85,
+                    g: 85,
+                    b: 85,
+                }),
+            },
+            styles: TextStyleConfig::default(),
+            options: HashMap::new(),
+        }
+    }
+
     // Powerline Light theme
     pub fn get_powerline_light() -> Config {
         Config {
@@ -688,6 +789,7 @@ impl ThemePresets {
                 Self::powerline_light_directory_segment(),
                 Self::powerline_light_git_segment(),
                 Self::powerline_light_usage_segment(),
+                Self::powerline_light_quota_segment(),
             ],
             theme: "powerline-light".to_string(),
         }
@@ -809,6 +911,36 @@ impl ThemePresets {
         }
     }
 
+    fn powerline_light_quota_segment() -> SegmentConfig {
+        SegmentConfig {
+            id: SegmentId::Quota,
+            enabled: true,
+            icon: IconConfig {
+                plain: "💰".to_string(),
+                nerd_font: "\u{f155}".to_string(),
+            },
+            colors: ColorConfig {
+                icon: Some(AnsiColor::Rgb {
+                    r: 255,
+                    g: 255,
+                    b: 255,
+                }),
+                text: Some(AnsiColor::Rgb {
+                    r: 255,
+                    g: 255,
+                    b: 255,
+                }),
+                background: Some(AnsiColor::Rgb {
+                    r: 76,
+                    g: 175,
+                    b: 80,
+                }),
+            },
+            styles: TextStyleConfig::default(),
+            options: HashMap::new(),
+        }
+    }
+
     // Powerline Rose Pine theme
     pub fn get_powerline_rose_pine() -> Config {
         Config {
@@ -821,6 +953,7 @@ impl ThemePresets {
                 Self::powerline_rose_pine_directory_segment(),
                 Self::powerline_rose_pine_git_segment(),
                 Self::powerline_rose_pine_usage_segment(),
+                Self::powerline_rose_pine_quota_segment(),
             ],
             theme: "powerline-rose-pine".to_string(),
         }
@@ -950,6 +1083,36 @@ impl ThemePresets {
         }
     }
 
+    fn powerline_rose_pine_quota_segment() -> SegmentConfig {
+        SegmentConfig {
+            id: SegmentId::Quota,
+            enabled: true,
+            icon: IconConfig {
+                plain: "💰".to_string(),
+                nerd_font: "\u{f155}".to_string(),
+            },
+            colors: ColorConfig {
+                icon: Some(AnsiColor::Rgb {
+                    r: 235,
+                    g: 188,
+                    b: 186,
+                }),
+                text: Some(AnsiColor::Rgb {
+                    r: 235,
+                    g: 188,
+                    b: 186,
+                }),
+                background: Some(AnsiColor::Rgb {
+                    r: 49,
+                    g: 46,
+                    b: 65,
+                }),
+            },
+            styles: TextStyleConfig::default(),
+            options: HashMap::new(),
+        }
+    }
+
     // Powerline Tokyo Night theme
     pub fn get_powerline_tokyo_night() -> Config {
         Config {
@@ -962,6 +1125,7 @@ impl ThemePresets {
                 Self::powerline_tokyo_night_directory_segment(),
                 Self::powerline_tokyo_night_git_segment(),
                 Self::powerline_tokyo_night_usage_segment(),
+                Self::powerline_tokyo_night_quota_segment(),
             ],
             theme: "powerline-tokyo-night".to_string(),
         }
@@ -1085,6 +1249,54 @@ impl ThemePresets {
                     g: 89,
                     b: 161,
                 }),
+            },
+            styles: TextStyleConfig::default(),
+            options: HashMap::new(),
+        }
+    }
+
+    fn powerline_tokyo_night_quota_segment() -> SegmentConfig {
+        SegmentConfig {
+            id: SegmentId::Quota,
+            enabled: true,
+            icon: IconConfig {
+                plain: "💰".to_string(),
+                nerd_font: "\u{f155}".to_string(),
+            },
+            colors: ColorConfig {
+                icon: Some(AnsiColor::Rgb {
+                    r: 247,
+                    g: 118,
+                    b: 142,
+                }),
+                text: Some(AnsiColor::Rgb {
+                    r: 247,
+                    g: 118,
+                    b: 142,
+                }),
+                background: Some(AnsiColor::Rgb {
+                    r: 36,
+                    g: 40,
+                    b: 59,
+                }),
+            },
+            styles: TextStyleConfig::default(),
+            options: HashMap::new(),
+        }
+    }
+
+    fn quota_segment() -> SegmentConfig {
+        SegmentConfig {
+            id: SegmentId::Quota,
+            enabled: true,
+            icon: IconConfig {
+                plain: "💰".to_string(),
+                nerd_font: "\u{f155}".to_string(),
+            },
+            colors: ColorConfig {
+                icon: Some(AnsiColor::Color16 { c16: 11 }), // Yellow
+                text: Some(AnsiColor::Color16 { c16: 11 }),
+                background: None,
             },
             styles: TextStyleConfig::default(),
             options: HashMap::new(),
