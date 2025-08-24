@@ -1,17 +1,18 @@
-# CCometixLine
+# CCometixLine-Packycc
 
 [English](README.md) | [中文](README.zh.md)
 
-A high-performance Claude Code statusline tool written in Rust with Git integration and real-time usage tracking.
+A high-performance Claude Code statusline tool written in Rust with Git integration, real-time usage tracking, and intelligent API quota monitoring.
 
 ![Language:Rust](https://img.shields.io/static/v1?label=Language&message=Rust&color=orange&style=flat-square)
 ![License:MIT](https://img.shields.io/static/v1?label=License&message=MIT&color=blue&style=flat-square)
+[![CI](https://github.com/ding113/CCometixLine/actions/workflows/ci.yml/badge.svg)](https://github.com/ding113/CCometixLine/actions/workflows/ci.yml)
 
 ## Screenshots
 
 ![CCometixLine](assets/img1.png)
 
-The statusline shows: Model | Directory | Git Branch Status | Context Window Information
+The statusline shows: Model | Directory | Git Branch Status | Context Window | API Quota
 
 ## Features
 
@@ -19,6 +20,7 @@ The statusline shows: Model | Directory | Git Branch Status | Context Window Inf
 - **Git integration** with branch, status, and tracking info  
 - **Model display** with simplified Claude model names
 - **Usage tracking** based on transcript analysis
+- **Smart API quota monitoring** with intelligent dual-endpoint detection
 - **Directory display** showing current workspace
 - **Minimal design** using Nerd Font icons
 - **Simple configuration** via command line options
@@ -173,7 +175,7 @@ ccline --configure
 
 ## Default Segments
 
-Displays: `Directory | Git Branch Status | Model | Context Window`
+Displays: `Directory | Git Branch Status | Model | Context Window | API Quota`
 
 ### Git Status Indicators
 
@@ -190,6 +192,20 @@ Shows simplified Claude model names:
 ### Context Window Display
 
 Token usage percentage based on transcript analysis with context limit tracking.
+
+### API Quota Display
+
+Smart monitoring of API usage with dual-endpoint support:
+- **Daily spent**: Precise daily usage amount (e.g., `$88.48`)
+- **Opus access**: Shows Opus model availability (`Opus✓` / `Opus✗`)
+- **Auto-detection**: Automatically detects the correct API endpoint
+- **Fault tolerance**: Seamless switching between endpoints on failure
+- **Zero configuration**: Just provide your API key, everything else is automatic
+
+Supports multiple API key sources:
+- Environment variables: `PACKYCODE_API_KEY`, `ANTHROPIC_API_KEY`, `ANTHROPIC_AUTH_TOKEN`
+- Claude Code settings.json
+- Local API key file: `~/.claude/api_key`
 
 ## Configuration
 

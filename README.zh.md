@@ -1,17 +1,18 @@
-# CCometixLine
+# CCometixLine-Packycc
 
 [English](README.md) | [中文](README.zh.md)
 
-基于 Rust 的高性能 Claude Code 状态栏工具，集成 Git 信息和实时使用量跟踪。
+基于 Rust 的高性能 Claude Code 状态栏工具，集成 Git 信息、实时使用量跟踪和智能 API 配额监控。
 
 ![Language:Rust](https://img.shields.io/static/v1?label=Language&message=Rust&color=orange&style=flat-square)
 ![License:MIT](https://img.shields.io/static/v1?label=License&message=MIT&color=blue&style=flat-square)
+[![CI](https://github.com/ding113/CCometixLine/actions/workflows/ci.yml/badge.svg)](https://github.com/ding113/CCometixLine/actions/workflows/ci.yml)
 
 ## 截图
 
 ![CCometixLine](assets/img1.png)
 
-状态栏显示：模型 | 目录 | Git 分支状态 | 上下文窗口信息
+状态栏显示：模型 | 目录 | Git 分支状态 | 上下文窗口 | API 配额
 
 ## 特性
 
@@ -19,6 +20,7 @@
 - **Git 集成** 显示分支、状态和跟踪信息
 - **模型显示** 简化的 Claude 模型名称
 - **使用量跟踪** 基于转录文件分析  
+- **智能 API 配额监控** 支持双端点智能检测
 - **目录显示** 显示当前工作空间
 - **简洁设计** 使用 Nerd Font 图标
 - **简单配置** 通过命令行选项配置
@@ -165,7 +167,7 @@ ccline --configure
 
 ## 默认段落
 
-显示：`目录 | Git 分支状态 | 模型 | 上下文窗口`
+显示：`目录 | Git 分支状态 | 模型 | 上下文窗口 | API 配额`
 
 ### Git 状态指示器
 
@@ -182,6 +184,16 @@ ccline --configure
 ### 上下文窗口显示
 
 基于转录文件分析的令牌使用百分比，包含上下文限制跟踪。
+
+### API 配额显示
+
+智能 API 使用量监控，支持双端点：
+- **每日花费**：精确的每日使用金额（如 `$88.48`）
+- **Opus 权限**：显示 Opus 模型可用性（`Opus✓` / `Opus✗`）
+- **自动检测**：自动检测正确的 API 端点
+- **故障容错**：端点故障时无缝切换
+- **零配置**：只需提供 API key，其他全自动
+
 
 ## 配置
 
