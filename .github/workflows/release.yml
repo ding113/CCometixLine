@@ -161,11 +161,11 @@ jobs:
       run: |
         # Publish platform packages first
         for platform in darwin-x64 darwin-arm64 linux-x64 linux-x64-musl win32-x64; do
-          echo "📦 Publishing @ding113/ccline-$platform"
+          echo "📦 Publishing @ding113/ccline-packycc-$platform"
           cd npm-publish/$platform
           npm publish --access public
           cd ../..
-          echo "✅ Published @ding113/ccline-$platform"
+          echo "✅ Published @ding113/ccline-packycc-$platform"
         done
 
     - name: Wait for NPM registry
@@ -178,9 +178,9 @@ jobs:
         NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
       run: |
         cd npm-publish/main
-        echo "📦 Publishing @ding113/ccline"
+        echo "📦 Publishing @ding113/ccline-packycc"
         npm publish --access public
-        echo "✅ Published @ding113/ccline"
+        echo "✅ Published @ding113/ccline-packycc"
         echo ""
         echo "🎉 NPM packages published successfully!"
-        echo "Install with: npm install -g @ding113/ccline"
+        echo "Install with: npm install -g @ding113/ccline-packycc"

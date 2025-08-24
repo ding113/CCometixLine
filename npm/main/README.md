@@ -1,11 +1,11 @@
-# @cometix/ccline
+# @ding113/ccline-packycc
 
 CCometixLine - High-performance Claude Code StatusLine tool
 
 ## Installation
 
 ```bash
-npm install -g @cometix/ccline
+npm install -g @ding113/ccline-packycc
 ```
 
 ## Features
@@ -32,11 +32,11 @@ ccline --version
 Use npm mirror for faster installation:
 
 ```bash
-npm install -g @cometix/ccline --registry https://registry.npmmirror.com
+npm install -g @ding113/ccline-packycc --registry https://registry.npmmirror.com
 ```
 
 ## More Information
 
-- GitHub: https://github.com/Haleclipse/CCometixLine
-- Issues: https://github.com/Haleclipse/CCometixLine/issues
+- GitHub: <https://github.com/ding113/ccline-packycc>
+- Issues: <https://github.com/ding113/ccline-packycc/issues>
 - License: MIT

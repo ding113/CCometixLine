@@ -1,5 +1,5 @@
 {
-  "name": "@ding113/ccline",
+  "name": "@ding113/ccline-packycc",
   "version": "0.0.0",
   "description": "CCometixLine - High-performance Claude Code StatusLine tool with intelligent API quota monitoring",
   "bin": {
@@ -9,15 +9,15 @@
     "postinstall": "node scripts/postinstall.js"
   },
   "optionalDependencies": {
-    "@ding113/ccline-darwin-x64": "0.0.0",
-    "@ding113/ccline-darwin-arm64": "0.0.0",
-    "@ding113/ccline-linux-x64": "0.0.0",
-    "@ding113/ccline-linux-x64-musl": "0.0.0",
-    "@ding113/ccline-win32-x64": "0.0.0"
+    "@ding113/ccline-packycc-darwin-x64": "0.0.0",
+    "@ding113/ccline-packycc-darwin-arm64": "0.0.0",
+    "@ding113/ccline-packycc-linux-x64": "0.0.0",
+    "@ding113/ccline-packycc-linux-x64-musl": "0.0.0",
+    "@ding113/ccline-packycc-win32-x64": "0.0.0"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/ding113/CCometixLine"
+    "url": "https://github.com/ding113/ccline-packycc"
   },
   "keywords": ["claude", "statusline", "claude-code", "rust", "cli", "api-quota", "packycode"],
   "author": "ding113",

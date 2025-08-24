@@ -10,7 +10,7 @@
 
 ![Language:Rust](https://img.shields.io/static/v1?label=Language&message=Rust&color=orange&style=flat-square)
 ![License:MIT](https://img.shields.io/static/v1?label=License&message=MIT&color=blue&style=flat-square)
-[![CI](https://github.com/ding113/CCometixLine/actions/workflows/ci.yml/badge.svg)](https://github.com/ding113/CCometixLine/actions/workflows/ci.yml)
+[![CI](https://github.com/ding113/ccline-packycc/actions/workflows/ci.yml/badge.svg)](https://github.com/ding113/ccline-packycc/actions/workflows/ci.yml)
 
 ## 截图
 
@@ -37,18 +37,18 @@
 
 ```bash
 # 全局安装
-npm install -g @ding113/ccline
+npm install -g @ding113/ccline-packycc
 
 # 或使用 yarn
-yarn global add @ding113/ccline
+yarn global add @ding113/ccline-packycc
 
 # 或使用 pnpm
-pnpm add -g @ding113/ccline
+pnpm add -g @ding113/ccline-packycc
 ```
 
 使用镜像源加速下载：
 ```bash
-npm install -g @ding113/ccline --registry https://registry.npmmirror.com
+npm install -g @ding113/ccline-packycc --registry https://registry.npmmirror.com
 ```
 
 安装后：
@@ -59,19 +59,19 @@ npm install -g @ding113/ccline --registry https://registry.npmmirror.com
 ### 更新
 
 ```bash
-npm update -g @ding113/ccline
+npm update -g @ding113/ccline-packycc
 ```
 
 ### 手动安装
 
-或者从 [Releases](https://github.com/ding113/CCometixLine/releases) 手动下载：
+或者从 [Releases](https://github.com/ding113/ccline-packycc/releases) 手动下载：
 
 #### Linux
 
 #### 选项 1: 动态链接版本（推荐）
 ```bash
 mkdir -p ~/.claude/ccline
-wget https://github.com/ding113/CCometixLine/releases/latest/download/ccline-linux-x64.tar.gz
+wget https://github.com/ding113/ccline-packycc/releases/latest/download/ccline-linux-x64.tar.gz
 tar -xzf ccline-linux-x64.tar.gz
 cp ccline ~/.claude/ccline/
 chmod +x ~/.claude/ccline/ccline
@@ -81,7 +81,7 @@ chmod +x ~/.claude/ccline/ccline
 #### 选项 2: 静态链接版本（通用兼容）
 ```bash
 mkdir -p ~/.claude/ccline
-wget https://github.com/ding113/CCometixLine/releases/latest/download/ccline-linux-x64-static.tar.gz
+wget https://github.com/ding113/ccline-packycc/releases/latest/download/ccline-linux-x64-static.tar.gz
 tar -xzf ccline-linux-x64-static.tar.gz
 cp ccline ~/.claude/ccline/
 chmod +x ~/.claude/ccline/ccline
@@ -92,7 +92,7 @@ chmod +x ~/.claude/ccline/ccline
 
 ```bash  
 mkdir -p ~/.claude/ccline
-wget https://github.com/ding113/CCometixLine/releases/latest/download/ccline-macos-x64.tar.gz
+wget https://github.com/ding113/ccline-packycc/releases/latest/download/ccline-macos-x64.tar.gz
 tar -xzf ccline-macos-x64.tar.gz
 cp ccline ~/.claude/ccline/
 chmod +x ~/.claude/ccline/ccline
@@ -102,7 +102,7 @@ chmod +x ~/.claude/ccline/ccline
 
 ```bash
 mkdir -p ~/.claude/ccline  
-wget https://github.com/ding113/CCometixLine/releases/latest/download/ccline-macos-arm64.tar.gz
+wget https://github.com/ding113/ccline-packycc/releases/latest/download/ccline-macos-arm64.tar.gz
 tar -xzf ccline-macos-arm64.tar.gz
 cp ccline ~/.claude/ccline/
 chmod +x ~/.claude/ccline/ccline
@@ -113,7 +113,7 @@ chmod +x ~/.claude/ccline/ccline
 ```powershell
 # 创建目录并下载
 New-Item -ItemType Directory -Force -Path "$env:USERPROFILE\.claude\ccline"
-Invoke-WebRequest -Uri "https://github.com/ding113/CCometixLine/releases/latest/download/ccline-windows-x64.zip" -OutFile "ccline-windows-x64.zip"
+Invoke-WebRequest -Uri "https://github.com/ding113/ccline-packycc/releases/latest/download/ccline-windows-x64.zip" -OutFile "ccline-windows-x64.zip"
 Expand-Archive -Path "ccline-windows-x64.zip" -DestinationPath "."
 Move-Item "ccline.exe" "$env:USERPROFILE\.claude\ccline\"
 ```
@@ -121,7 +121,7 @@ Move-Item "ccline.exe" "$env:USERPROFILE\.claude\ccline\"
 ### 从源码构建
 
 ```bash
-git clone https://github.com/ding113/CCometixLine.git
+git clone https://github.com/ding113/ccline-packycc.git
 cd CCometixLine
 cargo build --release
 cp target/release/ccometixline ~/.claude/ccline/ccline

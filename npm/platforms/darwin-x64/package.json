@@ -1,5 +1,5 @@
 {
-  "name": "@ding113/ccline-darwin-x64",
+  "name": "@ding113/ccline-packycc-darwin-x64",
   "version": "0.0.0",
   "description": "macOS x64 binary for CCometixLine",
   "files": ["ccline"],
@@ -7,7 +7,7 @@
   "cpu": ["x64"],
   "repository": {
     "type": "git",
-    "url": "https://github.com/ding113/CCometixLine"
+    "url": "https://github.com/ding113/ccline-packycc"
   },
   "author": "ding113",
   "license": "MIT"
