@@ -7,10 +7,14 @@ pub mod events;
 #[cfg(feature = "tui")]
 pub mod layout;
 #[cfg(feature = "tui")]
+pub mod main_menu;
+#[cfg(feature = "tui")]
 pub mod themes;
 
 #[cfg(feature = "tui")]
 pub use app::App;
+#[cfg(feature = "tui")]
+pub use main_menu::{MainMenu, MenuResult};
 
 #[cfg(feature = "tui")]
 pub fn run_configurator() -> Result<(), Box<dyn std::error::Error>> {

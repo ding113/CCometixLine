@@ -5,6 +5,27 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.4] - 2025-08-28
+
+### Added
+- **Interactive Main Menu**: Direct execution now shows TUI menu instead of hanging
+- **Claude Code Patcher**: `--patch` command to disable context warnings and enable verbose mode
+- **Three New Segments**: Extended statusline with additional information
+  - **Cost Segment**: Shows monetary cost with intelligent zero-cost handling
+  - **Session Segment**: Displays session duration and line changes  
+  - **OutputStyle Segment**: Shows current output style name
+- **Enhanced Theme System**: Comprehensive theme architecture with 9 built-in themes
+  - Modular theme organization with individual theme modules
+  - 4 new Powerline theme variants (dark, light, rose pine, tokyo night)
+  - Enhanced existing themes (cometix, default, minimal, gruvbox, nord)
+- **Model Management System**: Intelligent model recognition and configuration
+
+### Fixed
+- **Direct Execution Hanging**: No longer hangs when executed without stdin input
+- **Help Component Styling**: Consistent key highlighting across all TUI help displays
+- **Cross-platform Path Support**: Enhanced Windows %USERPROFILE% and Unix ~/ path handling
+
+
 ## [1.0.3] - 2025-08-17
 
 ### Fixed
