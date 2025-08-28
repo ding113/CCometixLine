@@ -1,0 +1,46 @@
+name: autofix.ci  # needed to securely identify the workflow
+
+on:
+  pull_request:
+  push:
+    branches: [ "main", "master" ]
+
+permissions:
+  contents: read
+
+env:
+  CARGO_TERM_COLOR: always
+  CARGO_INCREMENTAL: 0
+
+jobs:
+  autofix:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt, clippy
+
+      - name: Cache cargo registry
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            target
+          key: ${{ runner.os }}-cargo-autofix-${{ hashFiles('**/Cargo.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-cargo-autofix-
+            ${{ runner.os }}-cargo-
+
+      # Fix lint errors and warnings
+      - name: Fix clippy issues
+        run: cargo clippy --fix --workspace --allow-dirty --allow-staged
+
+      # Format code
+      - name: Format code
+        run: cargo fmt --all
+
+      - uses: autofix-ci/action@635ffb0c9798bd160680f18fd73371e355b85f27
