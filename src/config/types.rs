@@ -20,9 +20,9 @@ pub struct StyleConfig {
 #[derive(Debug, Clone, Copy, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "snake_case")]
 pub enum StyleMode {
-    Plain,     // emoji + 颜色
-    NerdFont,  // Nerd Font 图标 + 颜色
-    Powerline, // 未来支持
+    Plain,
+    NerdFont,
+    Powerline,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -68,6 +68,9 @@ pub enum SegmentId {
     Directory,
     Git,
     Usage,
+    Cost,
+    Session,
+    OutputStyle,
     Update,
     Quota,
 }
@@ -84,6 +87,7 @@ pub struct SegmentsConfig {
 // Data structures compatible with existing main.rs
 #[derive(Deserialize)]
 pub struct Model {
+    pub id: String,
     pub display_name: String,
 }
 
@@ -93,10 +97,26 @@ pub struct Workspace {
 }
 
 #[derive(Deserialize)]
+pub struct Cost {
+    pub total_cost_usd: Option<f64>,
+    pub total_duration_ms: Option<u64>,
+    pub total_api_duration_ms: Option<u64>,
+    pub total_lines_added: Option<u32>,
+    pub total_lines_removed: Option<u32>,
+}
+
+#[derive(Deserialize)]
+pub struct OutputStyle {
+    pub name: String,
+}
+
+#[derive(Deserialize)]
 pub struct InputData {
     pub model: Model,
     pub workspace: Workspace,
     pub transcript_path: String,
+    pub cost: Option<Cost>,
+    pub output_style: Option<OutputStyle>,
 }
 
 // OpenAI-style nested token details
@@ -357,4 +377,10 @@ pub struct Message {
 pub struct TranscriptEntry {
     pub r#type: Option<String>,
     pub message: Option<Message>,
+    #[serde(rename = "leafUuid")]
+    pub leaf_uuid: Option<String>,
+    pub uuid: Option<String>,
+    #[serde(rename = "parentUuid")]
+    pub parent_uuid: Option<String>,
+    pub summary: Option<String>,
 }

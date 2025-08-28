@@ -27,6 +27,10 @@ pub struct Cli {
     /// Check for updates
     #[arg(short = 'u', long = "update")]
     pub update: bool,
+
+    /// Patch Claude Code cli.js to disable context warnings
+    #[arg(long = "patch")]
+    pub patch: Option<String>,
 }
 
 impl Cli {

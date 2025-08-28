@@ -23,6 +23,7 @@ impl ConfigLoader {
         fs::create_dir_all(&themes_dir)?;
 
         let builtin_themes = [
+            "cometix",
             "default",
             "minimal",
             "gruvbox",
@@ -80,6 +81,7 @@ impl ConfigLoader {
             "minimal",
             "gruvbox",
             "nord",
+            "cometix",
             "powerline-dark",
             "powerline-light",
             "powerline-rose-pine",

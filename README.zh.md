@@ -2,7 +2,7 @@
 
 [English](README.md) | [中文](README.zh.md)
 
-基于 Rust 的高性能 Claude Code 状态栏工具，集成 Git 信息、实时使用量跟踪和智能 API 配额监控。
+基于 Rust 的高性能 Claude Code 状态栏工具，集成 Git 信息、使用量跟踪、交互式 TUI 配置、Claude Code 增强工具和智能 API 配额监控。
 
 > 这是专为 PackyCode 服务特别适配的 CCometixLine 版本。原版 CCometixLine 由 [Haleclipse](https://github.com/Haleclipse/CCometixLine) 基于 MIT License 创建。本项目也基于 MIT License 发布。
 >

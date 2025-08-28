@@ -136,6 +136,35 @@ impl PreviewComponent {
                         map
                     },
                 },
+                SegmentId::Cost => SegmentData {
+                    primary: "$0.02".to_string(),
+                    secondary: "".to_string(),
+                    metadata: {
+                        let mut map = HashMap::new();
+                        map.insert("cost".to_string(), "0.01234".to_string());
+                        map
+                    },
+                },
+                SegmentId::Session => SegmentData {
+                    primary: "3m45s".to_string(),
+                    secondary: "+156 -23".to_string(),
+                    metadata: {
+                        let mut map = HashMap::new();
+                        map.insert("duration_ms".to_string(), "225000".to_string());
+                        map.insert("lines_added".to_string(), "156".to_string());
+                        map.insert("lines_removed".to_string(), "23".to_string());
+                        map
+                    },
+                },
+                SegmentId::OutputStyle => SegmentData {
+                    primary: "default".to_string(),
+                    secondary: "".to_string(),
+                    metadata: {
+                        let mut map = HashMap::new();
+                        map.insert("style_name".to_string(), "default".to_string());
+                        map
+                    },
+                },
                 SegmentId::Update => SegmentData {
                     primary: format!("v{}", env!("CARGO_PKG_VERSION")),
                     secondary: "".to_string(),
