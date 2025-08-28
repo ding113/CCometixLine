@@ -1,0 +1,160 @@
+# .github/workflows/claude-assistant.yml
+name: Claude Code Assistant
+
+# ====================================================================================
+#  TRIGGERS
+#  该工作流会在多种 Issue 和 Pull Request 事件上触发，以确保全面覆盖。
+# ====================================================================================
+on:
+  # === 自动分析任务的触发器 ===
+  # 当 PR 被创建、更新代码、重新打开或编辑时触发
+  pull_request:
+    types: [opened, synchronize, reopened, edited]
+  # 当 Issue 被创建、重新打开或编辑时触发
+  issues:
+    types: [opened, reopened, edited]
+
+  # === 交互式响应任务的触发器 ===
+  # 当在 Issue 或 PR 中创建新评论时触发
+  issue_comment:
+    types: [created]
+  # 当提交 PR review 时触发
+  pull_request_review:
+    types: [submitted]
+  # 当在 PR review 中评论时触发
+  pull_request_review_comment:
+    types: [created]
+
+# ====================================================================================
+#  PERMISSIONS
+#  为工作流中的所有任务设置 GITHUB_TOKEN 的默认权限。
+# ====================================================================================
+permissions:
+  contents: write          # 允许读写文件和提交代码
+  pull-requests: write     # 允许在 PR 上评论、创建分支等
+  issues: write            # 允许在 Issue 上评论、添加标签等
+  actions: read            # 允许 Claude 读取 CI/CD 的结果
+  id-token: write          # Claude GitHub App 进行 OIDC 认证所需
+
+jobs:
+  # ====================================================================================
+  #  JOB 1: 自动分析 (AUTOMATION MODE)
+  #  此任务在新 PR、PR 更新和新 Issue 上自动运行，无需 @ 提及即可提供主动分析。
+  # ====================================================================================
+  claude-auto-analysis:
+    runs-on: ubuntu-latest
+    # 仅在 PR 或 Issue 事件上运行此任务
+    if: github.event_name == 'pull_request' || github.event_name == 'issues'
+    steps:
+      - name: Checkout Repository with Full History
+        uses: actions/checkout@v4
+        with:
+          # 获取所有 git 历史记录，以便 Claude 拥有完整的上下文进行分析
+          fetch-depth: 0
+
+      - name: Run Claude Proactive Analysis
+        uses: anthropics/claude-code-action@v1
+        id: claude-analysis
+        env:
+          # (可选) 对于拥有自定义部署或代理的用户。
+          # 请将您的 URL 存储在名为 CLAUDE_BASE_URL 的 GitHub secret 中。
+          ANTHROPIC_BASE_URL: ${{ secrets.CLAUDE_BASE_URL }}
+        with:
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          # 或者，您也可以使用 API 密钥 (取消注释下一行)。
+          # anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+
+          # (可选) 授予 Claude 读取 CI/CD 结果的权限。
+          additional_permissions: |
+            actions: read
+          prompt: |
+            ultrathink
+            A new update has occurred. Please perform a comprehensive analysis.
+            - If this is a new Pull Request, conduct a thorough code review.
+            - If this is a new Issue, analyze the description and suggest next steps.
+          claude_args: |
+            --model claude-sonnet-4-20250514
+            --system-prompt "ultrathink. You are a world-class AI software engineer with full access to the GitHub API. Be thorough, proactive, and helpful."
+            --allowedTools "
+              Edit,MultiEdit,Write,Read,Glob,Grep,LS,Bash,
+              mcp__github__cancel_workflow_run,mcp__github__delete_workflow_run_logs,mcp__github__download_workflow_run_artifact,mcp__github__get_job_logs,mcp__github__get_workflow_run,mcp__github__get_workflow_run_logs,mcp__github__get_workflow_run_usage,mcp__github__list_workflow_jobs,mcp__github__list_workflow_run_artifacts,mcp__github__list_workflow_runs,mcp__github__list_workflows,mcp__github__rerun_failed_jobs,mcp__github__rerun_workflow_run,mcp__github__run_workflow,
+              mcp__github__get_code_scanning_alert,mcp__github__list_code_scanning_alerts,
+              mcp__github__get_me,mcp__github__get_team_members,mcp__github__get_teams,
+              mcp__github__get_dependabot_alert,mcp__github__list_dependabot_alerts,
+              mcp__github__get_discussion,mcp__github__get_discussion_comments,mcp__github__list_discussion_categories,mcp__github__list_discussions,
+              mcp__github__create_gist,mcp__github__list_gists,mcp__github__update_gist,
+              mcp__github__add_issue_comment,mcp__github__add_sub_issue,mcp__github__assign_copilot_to_issue,mcp__github__create_issue,mcp__github__get_issue,mcp__github__get_issue_comments,mcp__github__list_issue_types,mcp__github__list_issues,mcp__github__list_sub_issues,mcp__github__remove_sub_issue,mcp__github__reprioritize_sub_issue,mcp__github__search_issues,mcp__github__update_issue,
+              mcp__github__dismiss_notification,mcp__github__get_notification_details,mcp__github__list_notifications,mcp__github__manage_notification_subscription,mcp__github__manage_repository_notification_subscription,mcp__github__mark_all_notifications_read,
+              mcp__github__search_orgs,
+              mcp__github__add_comment_to_pending_review,mcp__github__create_and_submit_pull_request_review,mcp__github__create_pending_pull_request_review,mcp__github__create_pull_request,mcp__github__delete_pending_pull_request_review,mcp__github__get_pull_request,mcp__github__get_pull_request_comments,mcp__github__get_pull_request_diff,mcp__github__get_pull_request_files,mcp__github__get_pull_request_reviews,mcp__github__get_pull_request_status,mcp__github__list_pull_requests,mcp__github__merge_pull_request,mcp__github__request_copilot_review,mcp__github__search_pull_requests,mcp__github__submit_pending_pull_request_review,mcp__github__update_pull_request,mcp__github__update_pull_request_branch,
+              mcp__github__create_branch,mcp__github__create_or_update_file,mcp__github__create_repository,mcp__github__delete_file,mcp__github__fork_repository,mcp__github__get_commit,mcp__github__get_file_contents,mcp__github__get_latest_release,mcp__github__get_release_by_tag,mcp__github__get_tag,mcp__github__list_branches,mcp__github__list_commits,mcp__github__list_releases,mcp__github__list_tags,mcp__github__push_files,mcp__github__search_code,mcp__github__search_repositories,
+              mcp__github__get_secret_scanning_alert,mcp__github__list_secret_scanning_alerts,
+              mcp__github__get_global_security_advisory,mcp__github__list_global_security_advisories,mcp__github__list_org_repository_security_advisories,mcp__github__list_repository_security_advisories,
+              mcp__github__search_users,
+              mcp__github__create_pull_request_with_copilot
+            "
+
+  # ====================================================================================
+  #  JOB 2: 交互式响应 (INTERACTIVE MODE)
+  #  此任务在检测到评论中有 '@claude' 提及后运行，以提供按需帮助。
+  # ====================================================================================
+  claude-interactive-response:
+    runs-on: ubuntu-latest
+    # 仅在评论类事件上运行此任务
+    if: >
+      github.event_name == 'issue_comment' ||
+      github.event_name == 'pull_request_review' ||
+      github.event_name == 'pull_request_review_comment'
+    steps:
+      - name: Checkout Repository with Full History
+        uses: actions/checkout@v4
+        with:
+          # 获取所有 git 历史记录，以便 Claude 拥有完整的上下文来响应请求
+          fetch-depth: 0
+
+      - name: Run Claude Interactive Assistant
+        uses: anthropics/claude-code-action@v1
+        id: claude-interactive
+        env:
+          # (可选) 对于拥有自定义部署或代理的用户。
+          # 请将您的 URL 存储在名为 CLAUDE_BASE_URL 的 GitHub secret 中。
+          ANTHROPIC_BASE_URL: ${{ secrets.CLAUDE_BASE_URL }}
+        with:
+          # 不提供 'prompt' 会使此任务在交互模式下运行。
+          # 它会自动扫描触发工作流的评论内容，寻找触发短语。
+          # 此处无需 prompt。
+
+          # 使用 OAuth 令牌进行身份验证 (推荐)。请将其存储在名为 CLAUDE_CODE_OAUTH_TOKEN 的 secret 中。
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          # 或者，您也可以使用 API 密钥 (取消注释下一行)。
+          # anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+
+          # 默认的触发短语是 '@claude'。如果需要，您可以自定义。
+          # trigger_phrase: "/claude"
+
+          # (可选) 授予 Claude 读取 CI/CD 结果的权限。
+          additional_permissions: |
+            actions: read
+
+          # 使用 claude_args 来配置 Claude 的核心能力。
+          claude_args: |
+            --model claude-sonnet-4-20250514
+            --system-prompt "ultrathink. You are a world-class AI software engineer with full access to the GitHub API. Be thorough, proactive, and helpful."
+            --allowedTools "
+              Edit,MultiEdit,Write,Read,Glob,Grep,LS,Bash,
+              mcp__github__cancel_workflow_run,mcp__github__delete_workflow_run_logs,mcp__github__download_workflow_run_artifact,mcp__github__get_job_logs,mcp__github__get_workflow_run,mcp__github__get_workflow_run_logs,mcp__github__get_workflow_run_usage,mcp__github__list_workflow_jobs,mcp__github__list_workflow_run_artifacts,mcp__github__list_workflow_runs,mcp__github__list_workflows,mcp__github__rerun_failed_jobs,mcp__github__rerun_workflow_run,mcp__github__run_workflow,
+              mcp__github__get_code_scanning_alert,mcp__github__list_code_scanning_alerts,
+              mcp__github__get_me,mcp__github__get_team_members,mcp__github__get_teams,
+              mcp__github__get_dependabot_alert,mcp__github__list_dependabot_alerts,
+              mcp__github__get_discussion,mcp__github__get_discussion_comments,mcp__github__list_discussion_categories,mcp__github__list_discussions,
+              mcp__github__create_gist,mcp__github__list_gists,mcp__github__update_gist,
+              mcp__github__add_issue_comment,mcp__github__add_sub_issue,mcp__github__assign_copilot_to_issue,mcp__github__create_issue,mcp__github__get_issue,mcp__github__get_issue_comments,mcp__github__list_issue_types,mcp__github__list_issues,mcp__github__list_sub_issues,mcp__github__remove_sub_issue,mcp__github__reprioritize_sub_issue,mcp__github__search_issues,mcp__github__update_issue,
+              mcp__github__dismiss_notification,mcp__github__get_notification_details,mcp__github__list_notifications,mcp__github__manage_notification_subscription,mcp__github__manage_repository_notification_subscription,mcp__github__mark_all_notifications_read,
+              mcp__github__search_orgs,
+              mcp__github__add_comment_to_pending_review,mcp__github__create_and_submit_pull_request_review,mcp__github__create_pending_pull_request_review,mcp__github__create_pull_request,mcp__github__delete_pending_pull_request_review,mcp__github__get_pull_request,mcp__github__get_pull_request_comments,mcp__github__get_pull_request_diff,mcp__github__get_pull_request_files,mcp__github__get_pull_request_reviews,mcp__github__get_pull_request_status,mcp__github__list_pull_requests,mcp__github__merge_pull_request,mcp__github__request_copilot_review,mcp__github__search_pull_requests,mcp__github__submit_pending_pull_request_review,mcp__github__update_pull_request,mcp__github__update_pull_request_branch,
+              mcp__github__create_branch,mcp__github__create_or_update_file,mcp__github__create_repository,mcp__github__delete_file,mcp__github__fork_repository,mcp__github__get_commit,mcp__github__get_file_contents,mcp__github__get_latest_release,mcp__github__get_release_by_tag,mcp__github__get_tag,mcp__github__list_branches,mcp__github__list_commits,mcp__github__list_releases,mcp__github__list_tags,mcp__github__push_files,mcp__github__search_code,mcp__github__search_repositories,
+              mcp__github__get_secret_scanning_alert,mcp__github__list_secret_scanning_alerts,
+              mcp__github__get_global_security_advisory,mcp__github__list_global_security_advisories,mcp__github__list_org_repository_security_advisories,mcp__github__list_repository_security_advisories,
+              mcp__github__search_users,
+              mcp__github__create_pull_request_with_copilot
+            "
